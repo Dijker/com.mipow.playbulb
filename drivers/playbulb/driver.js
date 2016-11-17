@@ -197,7 +197,7 @@ const self = module.exports = {
 								if (err || !deviceId) {
 									peripheral.disconnect();
 									if (++failedCount === advertisements.length) {
-										console.log('called callback 2', failedCount, advertisements.legit pushngth);
+										console.log('called callback 2', failedCount, advertisements.length);
 										callback(null, []);
 									}
 									return;
