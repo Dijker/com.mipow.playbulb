@@ -1,14 +1,14 @@
 {
 	"id": "com.mipow.playbulb",
 	"version": "0.0.1",
-	"compatibility": ">=0.11.0",
+	"compatibility": ">=0.1.0",
 	"name": {
-		"en": "Mipow Playbulb",
-		"nl": "Mipow Playbulb"
+		"en": "Mipow Playbulb (Experimental)",
+		"nl": "Mipow Playbulb (Experimenteel)"
 	},
 	"description": {
-		"en": "",
-		"nl": ""
+		"en": "This app enables you to use the Bluetooth 4.0 Mipow bluetooth lamps",
+		"nl": "Deze app onderstuend de Bluetooth 4.0 lampen van Mipow"
 	},
 	"images": {
 		"large": "assets/images/large.jpg",
@@ -17,9 +17,17 @@
 	"author": {
 		"name": "Athom B.V."
 	},
+	"category": [
+		"lights"
+	],
 	"drivers": [
 		{
 			"id": "playbulb",
+			"icon": "drivers/playbulb/assets/icon.svg",
+			"images": {
+				"large": "drivers/playbulb/assets/images/large.jpg",
+				"small": "drivers/playbulb/assets/images/small.jpg"
+			},
 			"name": {
 				"en": "MiPow Playbulb",
 				"nl": "MiPow Playbulb"
@@ -65,14 +73,14 @@
 					{
 						"name": "speed",
 						"type": "range",
-						"placeholder":{
+						"placeholder": {
 							"en": "Speed",
 							"nl": "Snelheid"
 						},
-						"min":"0",
-						"max":"1",
-						"step":"0.01",
-						"label":"%",
+						"min": "0",
+						"max": "1",
+						"step": "0.01",
+						"label": "%",
 						"labelMultiplier": 100,
 						"labelDecimals": 0
 					},
@@ -97,14 +105,14 @@
 					{
 						"name": "speed",
 						"type": "range",
-						"placeholder":{
+						"placeholder": {
 							"en": "Speed",
 							"nl": "Snelheid"
 						},
-						"min":"0",
-						"max":"1",
-						"step":"0.01",
-						"label":"%",
+						"min": "0",
+						"max": "1",
+						"step": "0.01",
+						"label": "%",
 						"labelMultiplier": 100,
 						"labelDecimals": 0
 					},
@@ -129,14 +137,14 @@
 					{
 						"name": "speed",
 						"type": "range",
-						"placeholder":{
+						"placeholder": {
 							"en": "Speed",
 							"nl": "Snelheid"
 						},
-						"min":"0",
-						"max":"1",
-						"step":"0.01",
-						"label":"%",
+						"min": "0",
+						"max": "1",
+						"step": "0.01",
+						"label": "%",
 						"labelMultiplier": 100,
 						"labelDecimals": 0
 					},
@@ -161,14 +169,14 @@
 					{
 						"name": "speed",
 						"type": "range",
-						"placeholder":{
+						"placeholder": {
 							"en": "Speed",
 							"nl": "Snelheid"
 						},
-						"min":"0",
-						"max":"1",
-						"step":"0.01",
-						"label":"%",
+						"min": "0",
+						"max": "1",
+						"step": "0.01",
+						"label": "%",
 						"labelMultiplier": 100,
 						"labelDecimals": 0
 					}
@@ -189,14 +197,14 @@
 					{
 						"name": "speed",
 						"type": "range",
-						"placeholder":{
+						"placeholder": {
 							"en": "Speed",
 							"nl": "Snelheid"
 						},
-						"min":"0",
-						"max":"1",
-						"step":"0.01",
-						"label":"%",
+						"min": "0",
+						"max": "1",
+						"step": "0.01",
+						"label": "%",
 						"labelMultiplier": 100,
 						"labelDecimals": 0
 					}

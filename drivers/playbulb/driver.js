@@ -1,5 +1,6 @@
-"use strict";
+'use strict';
 
+const DEBUG_FLAG = false;
 const convert = require('color-convert');
 const kelvinToRgb = require('kelvin-to-rgb');
 
@@ -14,6 +15,15 @@ const DEVICE_MAP = {
 	BTL300: {
 		SERVICE_CONTROL: 'ff02',
 	},
+	BTL301W: {
+		SERVICE_CONTROL: 'ff08',
+	},
+	'MESH GARDEN': {
+		SERVICE_CONTROL: 'fe03',
+	},
+	BTL200: {
+		SERVICE_CONTROL: 'ff01',
+	},
 };
 const SERVICE_CONTROL_SET = new Set(Object.keys(DEVICE_MAP).map(type => DEVICE_MAP[type].SERVICE_CONTROL));
 
@@ -26,20 +36,20 @@ const CHAR_COLOR = 'fffc';
 const CHAR_EFFECT = 'fffb';
 
 const effects = {
-	'flash': 0x00,
-	'pulse': 0x01,
-	'rainbow': 0x02,
-	'rainbow_fade': 0x03,
-	'candle': 0x04,
+	flash: 0x00,
+	pulse: 0x01,
+	rainbow: 0x02,
+	rainbow_fade: 0x03,
+	candle: 0x04,
 };
 
 const state2buffer = (state, effect) => {
 	if (effect) {
 		return new Buffer([
 			0x00,
-			parseInt(`0x${state.effectColor.slice(0, 2)}`),
-			parseInt(`0x${state.effectColor.slice(2, 4)}`),
-			parseInt(`0x${state.effectColor.slice(4, 6)}`),
+			parseInt(state.effectColor.slice(0, 2), 16),
+			parseInt(state.effectColor.slice(2, 4), 16),
+			parseInt(state.effectColor.slice(4, 6), 16),
 			effects[state.effect],
 			0x00,
 			(1 - state.effectSpeed) * 0xFF,
@@ -57,49 +67,58 @@ const state2buffer = (state, effect) => {
 	return new Buffer([0x00, 0xFF / 255 * rgb[0], 0xFF / 255 * rgb[1], 0xFF / 255 * rgb[2]]);
 };
 
-var self = module.exports = {
+const self = module.exports = {
 	init(devicesData, callback) {
 		console.log('DRIVER LOADED!!', devicesData);
 		devicesData.forEach(device => {
 			devices.set(device.id, device);
 			states.set(device.id, { onoff: 1, hue: 1, saturation: 1, dim: 1, temperature: 0.5, mode: 'color' });
 
-			let running = true;
-			let state = true;
-			let i = 0;
-			const timeouts = [100, 500, 1000, 2000, 6000, 10000];
+			if (DEBUG_FLAG) {
+				let running = true;
+				let state = true;
+				let i = 0;
+				const timeouts = [100, 500, 1000, 2000, 6000, 10000];
 
-			function setState() {
-				if (running) {
-					const date = Date.now();
-					console.log('set state', !state, timeouts[i % timeouts.length]);
-					return self.capabilities.onoff.set(device, state = !state, () => console.log('DURATION', Date.now() - date) & setTimeout(setState, timeouts[i++ % timeouts.length]));
-				} else {
+				const setState = () => {
+					if (running) {
+						const date = Date.now();
+						console.log('set state', !state, timeouts[i % timeouts.length]);
+						return self.capabilities.onoff.set(
+							device,
+							state = !state,
+							() => console.log('DURATION', Date.now() - date) & setTimeout(setState, timeouts[i++ % timeouts.length])
+						);
+					}
 					bleManager.find(device.id, (err, advertisement) => {
 						if (err) return console.log('no find', err);
 						advertisement.connect((err, peripheral) => {
 							if (err) return console.log('no connect', err);
-							peripheral.write(DEVICE_MAP[device.deviceId].SERVICE_CONTROL, CHAR_COLOR, new Buffer([0x00, 0x00, 0x00, 0x22]), (err, result) => {
-								if (err) return console.log('no write', err);
-							});
+							peripheral.write(
+								DEVICE_MAP[device.deviceId].SERVICE_CONTROL,
+								CHAR_COLOR, new Buffer([0x00, 0x00, 0x00, 0x22]),
+								(err) => {
+									if (err) return console.log('no write', err);
+								}
+							);
 							setTimeout(() => peripheral.disconnect(), 3000);
 						});
 					});
-				}
+				};
+
+
+				setInterval(() => {
+					running = false;
+					setTimeout(() => {
+						running = true;
+						setState();
+					}, 5 * 60 * 1000);
+				}, 15 * 60 * 1000);
+				setState();
 			}
-
-
-			setInterval(() => {
-				running = false;
-				setTimeout(() => {
-					running = true;
-					setState();
-				}, 5 * 60 * 1000);
-			}, 15 * 60 * 1000);
-			setState();
 		});
 
-		Homey.manager('flow').on('action.flash', function (callback, args) {
+		Homey.manager('flow').on('action.flash', (callback, args) => {
 			const state = states.get(args.device.id);
 			state.effect = 'flash';
 			state.effectColor = args.color.slice(1);
@@ -107,7 +126,7 @@ var self = module.exports = {
 			self.setEffect(args.device, callback);
 		});
 
-		Homey.manager('flow').on('action.pulse', function (callback, args) {
+		Homey.manager('flow').on('action.pulse', (callback, args) => {
 			const state = states.get(args.device.id);
 			state.effect = 'pulse';
 			state.effectColor = args.color.slice(1);
@@ -115,7 +134,7 @@ var self = module.exports = {
 			self.setEffect(args.device, callback);
 		});
 
-		Homey.manager('flow').on('action.candle', function (callback, args) {
+		Homey.manager('flow').on('action.candle', (callback, args) => {
 			const state = states.get(args.device.id);
 			state.effect = 'candle';
 			state.effectColor = args.color.slice(1);
@@ -123,7 +142,7 @@ var self = module.exports = {
 			self.setEffect(args.device, callback);
 		});
 
-		Homey.manager('flow').on('action.rainbow', function (callback, args) {
+		Homey.manager('flow').on('action.rainbow', (callback, args) => {
 			const state = states.get(args.device.id);
 			state.effect = 'rainbow';
 			state.effectColor = '000000';
@@ -131,7 +150,7 @@ var self = module.exports = {
 			self.setEffect(args.device, callback);
 		});
 
-		Homey.manager('flow').on('action.rainbow_fade', function (callback, args) {
+		Homey.manager('flow').on('action.rainbow_fade', (callback, args) => {
 			const state = states.get(args.device.id);
 			state.effect = 'rainbow_fade';
 			state.effectColor = '000000';
@@ -139,127 +158,23 @@ var self = module.exports = {
 			self.setEffect(args.device, callback);
 		});
 
-		Homey.manager('flow').on('action.stop_effect', function (callback, args) {
+		Homey.manager('flow').on('action.stop_effect', (callback, args) => {
 			const state = states.get(args.device.id);
 			delete state.effect;
 			self.setColor(args.device, callback);
 		});
 
-
-		// bleManager.find('853ea8da881f47eaa61431d4649ba227', (err, advertisement) => {
-		// 	advertisement.connect((err, peripheral) => {
-		// 		peripheral.updateRssi((err, result) => console.log('RSSI', err, result));
-		// 		// peripheral.getService('dcff0001b5743b39a8eae179e8642c4b', (err, service) => {
-		// 		// 		service.getCharacteristic('dcff0002b5743b39a8eae179e8642c4b', (err, characteristic) => {
-		// 		// 			setTimeout(() => characteristic.write(new Buffer([0xdc, 0xff, 0x00, 0x02, 0xb5, 0x74, 0x3b, 0x39, 0xa8, 0xea, 0xe1, 0x79, 0xe8, 0x64, 0x2c, 0x4b]), (err, response) => {
-		// 		// 				console.log('WRITE RESPONSE', err, response);
-		// 		// 			}), 1000)
-		// 		// 		})
-		// 		// });
-		// 	});
-		// });
-
 		callback();
-		// bleManager.discover(['ffff'], 5000, (err, result) => {
-		// 	console.log('DISCOVER RESULT', result.length);
-		// 	const playBulb = result.find(peripheral => peripheral.id === '4371c199495d46f593f68b2b017f920d');
-		// 	// console.log(result);
-		// 	if (playBulb) {
-		// 		console.log('PLAYBULB');
-		// 		playBulb.connect((err) => {
-		// 			console.log('CONNECT', err);
-		// 			playBulb.discoverServices((err, services) => {
-		// 				console.log('SERVICES', err);
-		// 				services.find(service => service.uuid === 'ff06').discoverCharacteristics((err, characteristics) => {
-		// 					console.log('CHARACTERISTICS', err);
-		// 					characteristics.find(characteristic => characteristic.uuid === 'fffc').write(new Buffer([0x00, 0xFF, 0x33, 0xFF]), (err, result) => {
-		// 						console.log('WRITE', err, result)
-		// 						setTimeout(() => playBulb.disconnect((err, result) => {
-		// 							console.log('DISCONNECT', err, result);
-		// 						}), 1000);
-		// 					})
-		// 				});
-		// 			});
-		// 		});
-		// 	} else {
-		// 		console.log('Could not find playbulb');
-		// 	}
-		// });
-		//
-		// bleManager.find('4371c199495d46f593f68b2b017f920d', 5000, (err, playBulb) => {
-		// 	if (err) {
-		// 		return console.log('find error', err);
-		// 	}
-		// 	setTimeout(() => playBulb.read('ff06', 'fffc', (err, value) => console.log('READ', err, value)), 5000);
-		// 	playBulb.write('ff06', 'fffc', new Buffer([0x00, 0x00, 0x00, 0xFF]), (err, result) => {
-		// 		if (err) {
-		// 			console.log('write error', err);
-		// 		}
-		// 		// setTimeout(() => playBulb.disconnect(), 500);
-		// 	});
-		// });
-
-		// let i = 0;
-		// const colorArray = [
-		// 	new Buffer([0x00, 0x00, 0x00, 0x05]),
-		// 	new Buffer([0x00, 0x05, 0x00, 0x00]),
-		// 	new Buffer([0x00, 0x00, 0x05, 0x00]),
-		// ];
-		//
-		// setInterval(() => {
-		// 	bleManager.find('4371c199495d46f593f68b2b017f920d', 1000, (err, adv) => {
-		// 		if (err) {
-		// 			return console.log('find error', err);
-		// 		}
-		// 		adv.connect((err, playBulb) => {
-		// 			if (err) {
-		// 				return console.log('connect error', err);
-		// 			}
-		// 			playBulb.discoverServices((err, services) => {
-		// 				if(err || !services){
-		// 					console.log('could not get services', err, services);
-		// 				}
-		// 				const lightService = services.find(service => service.uuid === 'ff06');
-		// 				if (lightService) {
-		// 					console.log('Found service with uuid ff06');
-		// 					lightService.discoverCharacteristics((err, characteristics) => {
-		// 						if(err || !characteristics){
-		// 							console.log('could not get characteristics', err, characteristics);
-		// 						}
-		// 						const lightChar = characteristics.find(char => char.uuid === 'fffc');
-		// 						if (lightChar) {
-		// 							console.log('Found characteristic with uuid fffc');
-		// 							lightChar.write(colorArray[++i % colorArray.length], (err, result) => {
-		// 								console.log('written', err, result);
-		// 							});
-		// 						}
-		// 					})
-		// 				}
-		// 			});
-		// 			// setTimeout(() => playBulb.read('ff06', 'fffc', (err, value) => console.log('READ', err, value)), 500);
-		// 			// playBulb.write('ff06', 'fffc', colorArray[(++i % colorArray.length)], (err, result) => {
-		// 			// 	if (err) {
-		// 			// 		console.log('write error', err);
-		// 			// 	}else{
-		// 			// 		console.log('write success');
-		// 			// 	}
-		// 			setTimeout(() => console.log('disconnecting') & playBulb.disconnect(console.log.bind(console, 'disconnected')), 1000);
-		// 			// });
-		// 		});
-		// 	});
-		// }, 3000);
 
 	},
-
-	pair(socket)
-	{
-		socket.on('list_devices', function (data, callback) {
+	pair(socket) {
+		socket.on('list_devices', (data, callback) => {
 			console.log('LIST DEVICES');
 			bleManager.discover([], 5000, (err, advertisements) => {
 				console.log('DISCOVER', advertisements.length);
 
 				advertisements = advertisements || [];
-				advertisements.filter(advertisement => !devices.has(advertisement.uuid));
+				advertisements = advertisements.filter(advertisement => !devices.has(advertisement.uuid));
 				if (advertisements.length === 0) {
 					return callback(null, []);
 				}
@@ -271,16 +186,18 @@ var self = module.exports = {
 						advertisement.connect((err, peripheral) => {
 							if (err) {
 								if (++failedCount === advertisements.length) {
+									console.log('called callback 1', failedCount, advertisements.length);
 									callback(null, []);
 								}
 								return;
 							}
 							peripheral.read(SERVICE_MANUFACTURER, CHAR_SERIALNR, (err, serialNumber) => {
-								console.log('serialnr', serialNumber);
+								console.log('serialnr', err, (serialNumber || '').toString());
 								const deviceId = Object.keys(DEVICE_MAP).find(id => (serialNumber || '').toString().indexOf(id) === 0);
 								if (err || !deviceId) {
 									peripheral.disconnect();
 									if (++failedCount === advertisements.length) {
+										console.log('called callback 2', failedCount, advertisements.legit pushngth);
 										callback(null, []);
 									}
 									return;
@@ -295,6 +212,7 @@ var self = module.exports = {
 									peripheral.disconnect();
 									if (err) {
 										if (++failedCount === advertisements.length) {
+											console.log('called callback 3', failedCount, advertisements.length);
 											callback(null, []);
 										}
 										return;
@@ -305,11 +223,15 @@ var self = module.exports = {
 										callback(null, [deviceData]);
 										callback = null;
 									} else {
+										console.log('EMIT DEVICE', [deviceData]);
 										socket.emit('list_devices', [deviceData]);
 									}
 								});
 							});
 						});
+					} else if(++failedCount === advertisements.length){
+						console.log('called callback 0', failedCount, advertisements.length);
+						callback(null, []);
 					}
 				});
 			});
@@ -321,18 +243,15 @@ var self = module.exports = {
 			states.set(newDevice.data.id, { onoff: 1, hue: 1, saturation: 1, dim: 1, temperature: 0.5, mode: 'color' });
 		});
 
-		socket.on('disconnect', function () {
-			console.log("User aborted pairing, or pairing is finished");
-		})
+		socket.on('disconnect', () => {
+			console.log('User aborted pairing, or pairing is finished');
+		});
 	},
-
-	delete(device)
-	{
+	delete(device) {
 		devices.delete(device.id);
 		states.delete(device.id);
 	},
-
-	setEffect(device, callback){
+	setEffect(device, callback) {
 		console.log('start effect', device.id);
 		let date = Date.now();
 		bleManager.find(device.id, (err, advertisement) => {
@@ -341,16 +260,21 @@ var self = module.exports = {
 			advertisement.connect((err, peripheral) => {
 				console.log('connect', (date - (date = Date.now())) * -1);
 				if (err) return callback(err);
-				peripheral.write(DEVICE_MAP[device.deviceId].SERVICE_CONTROL, CHAR_EFFECT, state2buffer(states.get(device.id), true), (err, result) => {
-					console.log('write', (date - (date = Date.now())) * -1);
-					callback(err, result);
-					setTimeout(() => peripheral.disconnect(), 3000);
-				});
-			})
+				peripheral.write(
+					DEVICE_MAP[device.deviceId].SERVICE_CONTROL,
+					CHAR_EFFECT,
+					state2buffer(states.get(device.id), true),
+					(err, result) => {
+						console.log('write', (date - (date = Date.now())) * -1);
+						callback(err, result);
+						setTimeout(() => peripheral.disconnect(), 3000);
+					}
+				);
+			});
 		});
 	},
 
-	setColor(device, callback){
+	setColor(device, callback) {
 		console.log('start', device.id);
 		let date = Date.now();
 		bleManager.find(device.id, (err, advertisement) => {
@@ -359,12 +283,17 @@ var self = module.exports = {
 			advertisement.connect((err, peripheral) => {
 				console.log('connect', (date - (date = Date.now())) * -1);
 				if (err) return callback(err);
-				peripheral.write(DEVICE_MAP[device.deviceId].SERVICE_CONTROL, CHAR_COLOR, state2buffer(states.get(device.id)), (err, result) => {
-					console.log('write', (date - (date = Date.now())) * -1);
-					callback(err, result);
-					setTimeout(() => peripheral.disconnect(), 3000);
-				});
-			})
+				peripheral.write(
+					DEVICE_MAP[device.deviceId].SERVICE_CONTROL,
+					CHAR_COLOR,
+					state2buffer(states.get(device.id)),
+					(err, result) => {
+						console.log('write', (date - (date = Date.now())) * -1);
+						callback(err, result);
+						setTimeout(() => peripheral.disconnect(), 3000);
+					}
+				);
+			});
 		});
 	},
 
@@ -376,7 +305,7 @@ var self = module.exports = {
 				const state = states.get(device.id);
 				state.onoff = value;
 				self.setColor(device, err => callback(err, value));
-			}
+			},
 		},
 		dim: {
 			get: (device, callback) => callback(null, states.get(device.id).dim),
