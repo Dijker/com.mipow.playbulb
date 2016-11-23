@@ -1,6 +1,6 @@
 {
 	"id": "com.mipow.playbulb",
-	"version": "0.0.1",
+	"version": "0.1.0",
 	"compatibility": ">=1.0.0",
 	"name": {
 		"en": "Mipow Playbulb (Experimental)",
@@ -22,15 +22,151 @@
 	],
 	"drivers": [
 		{
-			"id": "playbulb",
-			"icon": "drivers/playbulb/assets/icon.svg",
+			"id": "rainbow",
+			"icon": "drivers/rainbow/assets/icon.svg",
 			"images": {
-				"large": "drivers/playbulb/assets/images/large.jpg",
-				"small": "drivers/playbulb/assets/images/small.jpg"
+				"large": "drivers/rainbow/assets/images/large.jpg",
+				"small": "drivers/rainbow/assets/images/small.jpg"
 			},
 			"name": {
-				"en": "MiPow Playbulb",
-				"nl": "MiPow Playbulb"
+				"en": "MiPow Playbulb Rainbow",
+				"nl": "MiPow Playbulb Rainbow"
+			},
+			"class": "light",
+			"capabilities": [
+				"onoff",
+				"dim",
+				"light_hue",
+				"light_saturation",
+				"light_temperature",
+				"light_mode"
+			],
+			"pair": [
+				{
+					"id": "list_devices",
+					"template": "list_devices",
+					"navigation": {
+						"next": "add_devices"
+					}
+				},
+				{
+					"id": "add_devices",
+					"template": "add_devices"
+				}
+			]
+		},
+		{
+			"id": "smart",
+			"icon": "drivers/smart/assets/icon.svg",
+			"images": {
+				"large": "drivers/smart/assets/images/large.jpg",
+				"small": "drivers/smart/assets/images/small.jpg"
+			},
+			"name": {
+				"en": "MiPow Playbulb Smart",
+				"nl": "MiPow Playbulb Smart"
+			},
+			"class": "light",
+			"capabilities": [
+				"onoff",
+				"dim",
+				"light_hue",
+				"light_saturation",
+				"light_temperature",
+				"light_mode"
+			],
+			"pair": [
+				{
+					"id": "list_devices",
+					"template": "list_devices",
+					"navigation": {
+						"next": "add_devices"
+					}
+				},
+				{
+					"id": "add_devices",
+					"template": "add_devices"
+				}
+			]
+		},
+		{
+			"id": "garden",
+			"icon": "drivers/garden/assets/icon.svg",
+			"images": {
+				"large": "drivers/garden/assets/images/large.jpg",
+				"small": "drivers/garden/assets/images/small.jpg"
+			},
+			"name": {
+				"en": "MiPow Playbulb Garden",
+				"nl": "MiPow Playbulb Garden"
+			},
+			"class": "light",
+			"capabilities": [
+				"onoff",
+				"dim",
+				"light_hue",
+				"light_saturation",
+				"light_temperature",
+				"light_mode"
+			],
+			"pair": [
+				{
+					"id": "list_devices",
+					"template": "list_devices",
+					"navigation": {
+						"next": "add_devices"
+					}
+				},
+				{
+					"id": "add_devices",
+					"template": "add_devices"
+				}
+			]
+		},
+		{
+			"id": "sphere",
+			"icon": "drivers/sphere/assets/icon.svg",
+			"images": {
+				"large": "drivers/sphere/assets/images/large.jpg",
+				"small": "drivers/sphere/assets/images/small.jpg"
+			},
+			"name": {
+				"en": "MiPow Playbulb Sphere",
+				"nl": "MiPow Playbulb Sphere"
+			},
+			"class": "light",
+			"capabilities": [
+				"onoff",
+				"dim",
+				"light_hue",
+				"light_saturation",
+				"light_temperature",
+				"light_mode"
+			],
+			"pair": [
+				{
+					"id": "list_devices",
+					"template": "list_devices",
+					"navigation": {
+						"next": "add_devices"
+					}
+				},
+				{
+					"id": "add_devices",
+					"template": "add_devices"
+				}
+			]
+		},
+		{
+			"id": "candle",
+			"icon": "drivers/candle/assets/icon.svg",
+			"images": {
+				"large": "drivers/candle/assets/images/large.jpg",
+				"small": "drivers/candle/assets/images/small.jpg"
+			},
+			"name": {
+				"en": "MiPow Playbulb Candle",
+				"nl": "MiPow Playbulb Candle"
 			},
 			"class": "light",
 			"capabilities": [
@@ -68,7 +204,7 @@
 					{
 						"name": "device",
 						"type": "device",
-						"filter": "driver_id=playbulb"
+						"filter": "driver_id=candle"
 					},
 					{
 						"name": "speed",
@@ -100,7 +236,7 @@
 					{
 						"name": "device",
 						"type": "device",
-						"filter": "driver_id=playbulb"
+						"filter": "driver_id=candle"
 					},
 					{
 						"name": "speed",
@@ -132,7 +268,7 @@
 					{
 						"name": "device",
 						"type": "device",
-						"filter": "driver_id=playbulb"
+						"filter": "driver_id=candle"
 					},
 					{
 						"name": "speed",
@@ -164,7 +300,7 @@
 					{
 						"name": "device",
 						"type": "device",
-						"filter": "driver_id=playbulb"
+						"filter": "driver_id=candle"
 					},
 					{
 						"name": "speed",
@@ -192,7 +328,7 @@
 					{
 						"name": "device",
 						"type": "device",
-						"filter": "driver_id=playbulb"
+						"filter": "driver_id=candle"
 					},
 					{
 						"name": "speed",
@@ -220,7 +356,671 @@
 					{
 						"name": "device",
 						"type": "device",
-						"filter": "driver_id=playbulb"
+						"filter": "driver_id=candle"
+					}
+				]
+			},
+			{
+				"id": "flash",
+				"title": {
+					"en": "Flash the light",
+					"nl": "Laat de lamp flitsen"
+				},
+				"args": [
+					{
+						"name": "device",
+						"type": "device",
+						"filter": "driver_id=garden"
+					},
+					{
+						"name": "speed",
+						"type": "range",
+						"placeholder": {
+							"en": "Speed",
+							"nl": "Snelheid"
+						},
+						"min": "0",
+						"max": "1",
+						"step": "0.01",
+						"label": "%",
+						"labelMultiplier": 100,
+						"labelDecimals": 0
+					},
+					{
+						"name": "color",
+						"type": "color"
+					}
+				]
+			},
+			{
+				"id": "pulse",
+				"title": {
+					"en": "Pulse the light",
+					"nl": "Pulseer de lamp"
+				},
+				"args": [
+					{
+						"name": "device",
+						"type": "device",
+						"filter": "driver_id=garden"
+					},
+					{
+						"name": "speed",
+						"type": "range",
+						"placeholder": {
+							"en": "Speed",
+							"nl": "Snelheid"
+						},
+						"min": "0",
+						"max": "1",
+						"step": "0.01",
+						"label": "%",
+						"labelMultiplier": 100,
+						"labelDecimals": 0
+					},
+					{
+						"name": "color",
+						"type": "color"
+					}
+				]
+			},
+			{
+				"id": "candle",
+				"title": {
+					"en": "Play a candle effect",
+					"nl": "Speel een kaars effect"
+				},
+				"args": [
+					{
+						"name": "device",
+						"type": "device",
+						"filter": "driver_id=garden"
+					},
+					{
+						"name": "speed",
+						"type": "range",
+						"placeholder": {
+							"en": "Speed",
+							"nl": "Snelheid"
+						},
+						"min": "0",
+						"max": "1",
+						"step": "0.01",
+						"label": "%",
+						"labelMultiplier": 100,
+						"labelDecimals": 0
+					},
+					{
+						"name": "color",
+						"type": "color"
+					}
+				]
+			},
+			{
+				"id": "rainbow",
+				"title": {
+					"en": "Play a rainbow effect",
+					"nl": "Speel een regenboog effect"
+				},
+				"args": [
+					{
+						"name": "device",
+						"type": "device",
+						"filter": "driver_id=garden"
+					},
+					{
+						"name": "speed",
+						"type": "range",
+						"placeholder": {
+							"en": "Speed",
+							"nl": "Snelheid"
+						},
+						"min": "0",
+						"max": "1",
+						"step": "0.01",
+						"label": "%",
+						"labelMultiplier": 100,
+						"labelDecimals": 0
+					}
+				]
+			},
+			{
+				"id": "rainbow_fade",
+				"title": {
+					"en": "Play a fading rainbow effect",
+					"nl": "Speel een vloeiend regenboog effect"
+				},
+				"args": [
+					{
+						"name": "device",
+						"type": "device",
+						"filter": "driver_id=garden"
+					},
+					{
+						"name": "speed",
+						"type": "range",
+						"placeholder": {
+							"en": "Speed",
+							"nl": "Snelheid"
+						},
+						"min": "0",
+						"max": "1",
+						"step": "0.01",
+						"label": "%",
+						"labelMultiplier": 100,
+						"labelDecimals": 0
+					}
+				]
+			},
+			{
+				"id": "stop_effect",
+				"title": {
+					"en": "Stop current effect",
+					"nl": "Stop huidig effect"
+				},
+				"args": [
+					{
+						"name": "device",
+						"type": "device",
+						"filter": "driver_id=garden"
+					}
+				]
+			},
+			{
+				"id": "flash",
+				"title": {
+					"en": "Flash the light",
+					"nl": "Laat de lamp flitsen"
+				},
+				"args": [
+					{
+						"name": "device",
+						"type": "device",
+						"filter": "driver_id=rainbow"
+					},
+					{
+						"name": "speed",
+						"type": "range",
+						"placeholder": {
+							"en": "Speed",
+							"nl": "Snelheid"
+						},
+						"min": "0",
+						"max": "1",
+						"step": "0.01",
+						"label": "%",
+						"labelMultiplier": 100,
+						"labelDecimals": 0
+					},
+					{
+						"name": "color",
+						"type": "color"
+					}
+				]
+			},
+			{
+				"id": "pulse",
+				"title": {
+					"en": "Pulse the light",
+					"nl": "Pulseer de lamp"
+				},
+				"args": [
+					{
+						"name": "device",
+						"type": "device",
+						"filter": "driver_id=rainbow"
+					},
+					{
+						"name": "speed",
+						"type": "range",
+						"placeholder": {
+							"en": "Speed",
+							"nl": "Snelheid"
+						},
+						"min": "0",
+						"max": "1",
+						"step": "0.01",
+						"label": "%",
+						"labelMultiplier": 100,
+						"labelDecimals": 0
+					},
+					{
+						"name": "color",
+						"type": "color"
+					}
+				]
+			},
+			{
+				"id": "candle",
+				"title": {
+					"en": "Play a candle effect",
+					"nl": "Speel een kaars effect"
+				},
+				"args": [
+					{
+						"name": "device",
+						"type": "device",
+						"filter": "driver_id=rainbow"
+					},
+					{
+						"name": "speed",
+						"type": "range",
+						"placeholder": {
+							"en": "Speed",
+							"nl": "Snelheid"
+						},
+						"min": "0",
+						"max": "1",
+						"step": "0.01",
+						"label": "%",
+						"labelMultiplier": 100,
+						"labelDecimals": 0
+					},
+					{
+						"name": "color",
+						"type": "color"
+					}
+				]
+			},
+			{
+				"id": "rainbow",
+				"title": {
+					"en": "Play a rainbow effect",
+					"nl": "Speel een regenboog effect"
+				},
+				"args": [
+					{
+						"name": "device",
+						"type": "device",
+						"filter": "driver_id=rainbow"
+					},
+					{
+						"name": "speed",
+						"type": "range",
+						"placeholder": {
+							"en": "Speed",
+							"nl": "Snelheid"
+						},
+						"min": "0",
+						"max": "1",
+						"step": "0.01",
+						"label": "%",
+						"labelMultiplier": 100,
+						"labelDecimals": 0
+					}
+				]
+			},
+			{
+				"id": "rainbow_fade",
+				"title": {
+					"en": "Play a fading rainbow effect",
+					"nl": "Speel een vloeiend regenboog effect"
+				},
+				"args": [
+					{
+						"name": "device",
+						"type": "device",
+						"filter": "driver_id=rainbow"
+					},
+					{
+						"name": "speed",
+						"type": "range",
+						"placeholder": {
+							"en": "Speed",
+							"nl": "Snelheid"
+						},
+						"min": "0",
+						"max": "1",
+						"step": "0.01",
+						"label": "%",
+						"labelMultiplier": 100,
+						"labelDecimals": 0
+					}
+				]
+			},
+			{
+				"id": "stop_effect",
+				"title": {
+					"en": "Stop current effect",
+					"nl": "Stop huidig effect"
+				},
+				"args": [
+					{
+						"name": "device",
+						"type": "device",
+						"filter": "driver_id=rainbow"
+					}
+				]
+			},
+			{
+				"id": "flash",
+				"title": {
+					"en": "Flash the light",
+					"nl": "Laat de lamp flitsen"
+				},
+				"args": [
+					{
+						"name": "device",
+						"type": "device",
+						"filter": "driver_id=smart"
+					},
+					{
+						"name": "speed",
+						"type": "range",
+						"placeholder": {
+							"en": "Speed",
+							"nl": "Snelheid"
+						},
+						"min": "0",
+						"max": "1",
+						"step": "0.01",
+						"label": "%",
+						"labelMultiplier": 100,
+						"labelDecimals": 0
+					},
+					{
+						"name": "color",
+						"type": "color"
+					}
+				]
+			},
+			{
+				"id": "pulse",
+				"title": {
+					"en": "Pulse the light",
+					"nl": "Pulseer de lamp"
+				},
+				"args": [
+					{
+						"name": "device",
+						"type": "device",
+						"filter": "driver_id=smart"
+					},
+					{
+						"name": "speed",
+						"type": "range",
+						"placeholder": {
+							"en": "Speed",
+							"nl": "Snelheid"
+						},
+						"min": "0",
+						"max": "1",
+						"step": "0.01",
+						"label": "%",
+						"labelMultiplier": 100,
+						"labelDecimals": 0
+					},
+					{
+						"name": "color",
+						"type": "color"
+					}
+				]
+			},
+			{
+				"id": "candle",
+				"title": {
+					"en": "Play a candle effect",
+					"nl": "Speel een kaars effect"
+				},
+				"args": [
+					{
+						"name": "device",
+						"type": "device",
+						"filter": "driver_id=smart"
+					},
+					{
+						"name": "speed",
+						"type": "range",
+						"placeholder": {
+							"en": "Speed",
+							"nl": "Snelheid"
+						},
+						"min": "0",
+						"max": "1",
+						"step": "0.01",
+						"label": "%",
+						"labelMultiplier": 100,
+						"labelDecimals": 0
+					},
+					{
+						"name": "color",
+						"type": "color"
+					}
+				]
+			},
+			{
+				"id": "rainbow",
+				"title": {
+					"en": "Play a rainbow effect",
+					"nl": "Speel een regenboog effect"
+				},
+				"args": [
+					{
+						"name": "device",
+						"type": "device",
+						"filter": "driver_id=smart"
+					},
+					{
+						"name": "speed",
+						"type": "range",
+						"placeholder": {
+							"en": "Speed",
+							"nl": "Snelheid"
+						},
+						"min": "0",
+						"max": "1",
+						"step": "0.01",
+						"label": "%",
+						"labelMultiplier": 100,
+						"labelDecimals": 0
+					}
+				]
+			},
+			{
+				"id": "rainbow_fade",
+				"title": {
+					"en": "Play a fading rainbow effect",
+					"nl": "Speel een vloeiend regenboog effect"
+				},
+				"args": [
+					{
+						"name": "device",
+						"type": "device",
+						"filter": "driver_id=smart"
+					},
+					{
+						"name": "speed",
+						"type": "range",
+						"placeholder": {
+							"en": "Speed",
+							"nl": "Snelheid"
+						},
+						"min": "0",
+						"max": "1",
+						"step": "0.01",
+						"label": "%",
+						"labelMultiplier": 100,
+						"labelDecimals": 0
+					}
+				]
+			},
+			{
+				"id": "stop_effect",
+				"title": {
+					"en": "Stop current effect",
+					"nl": "Stop huidig effect"
+				},
+				"args": [
+					{
+						"name": "device",
+						"type": "device",
+						"filter": "driver_id=smart"
+					}
+				]
+			},
+			{
+				"id": "flash",
+				"title": {
+					"en": "Flash the light",
+					"nl": "Laat de lamp flitsen"
+				},
+				"args": [
+					{
+						"name": "device",
+						"type": "device",
+						"filter": "driver_id=sphere"
+					},
+					{
+						"name": "speed",
+						"type": "range",
+						"placeholder": {
+							"en": "Speed",
+							"nl": "Snelheid"
+						},
+						"min": "0",
+						"max": "1",
+						"step": "0.01",
+						"label": "%",
+						"labelMultiplier": 100,
+						"labelDecimals": 0
+					},
+					{
+						"name": "color",
+						"type": "color"
+					}
+				]
+			},
+			{
+				"id": "pulse",
+				"title": {
+					"en": "Pulse the light",
+					"nl": "Pulseer de lamp"
+				},
+				"args": [
+					{
+						"name": "device",
+						"type": "device",
+						"filter": "driver_id=sphere"
+					},
+					{
+						"name": "speed",
+						"type": "range",
+						"placeholder": {
+							"en": "Speed",
+							"nl": "Snelheid"
+						},
+						"min": "0",
+						"max": "1",
+						"step": "0.01",
+						"label": "%",
+						"labelMultiplier": 100,
+						"labelDecimals": 0
+					},
+					{
+						"name": "color",
+						"type": "color"
+					}
+				]
+			},
+			{
+				"id": "candle",
+				"title": {
+					"en": "Play a candle effect",
+					"nl": "Speel een kaars effect"
+				},
+				"args": [
+					{
+						"name": "device",
+						"type": "device",
+						"filter": "driver_id=sphere"
+					},
+					{
+						"name": "speed",
+						"type": "range",
+						"placeholder": {
+							"en": "Speed",
+							"nl": "Snelheid"
+						},
+						"min": "0",
+						"max": "1",
+						"step": "0.01",
+						"label": "%",
+						"labelMultiplier": 100,
+						"labelDecimals": 0
+					},
+					{
+						"name": "color",
+						"type": "color"
+					}
+				]
+			},
+			{
+				"id": "rainbow",
+				"title": {
+					"en": "Play a rainbow effect",
+					"nl": "Speel een regenboog effect"
+				},
+				"args": [
+					{
+						"name": "device",
+						"type": "device",
+						"filter": "driver_id=sphere"
+					},
+					{
+						"name": "speed",
+						"type": "range",
+						"placeholder": {
+							"en": "Speed",
+							"nl": "Snelheid"
+						},
+						"min": "0",
+						"max": "1",
+						"step": "0.01",
+						"label": "%",
+						"labelMultiplier": 100,
+						"labelDecimals": 0
+					}
+				]
+			},
+			{
+				"id": "rainbow_fade",
+				"title": {
+					"en": "Play a fading rainbow effect",
+					"nl": "Speel een vloeiend regenboog effect"
+				},
+				"args": [
+					{
+						"name": "device",
+						"type": "device",
+						"filter": "driver_id=sphere"
+					},
+					{
+						"name": "speed",
+						"type": "range",
+						"placeholder": {
+							"en": "Speed",
+							"nl": "Snelheid"
+						},
+						"min": "0",
+						"max": "1",
+						"step": "0.01",
+						"label": "%",
+						"labelMultiplier": 100,
+						"labelDecimals": 0
+					}
+				]
+			},
+			{
+				"id": "stop_effect",
+				"title": {
+					"en": "Stop current effect",
+					"nl": "Stop huidig effect"
+				},
+				"args": [
+					{
+						"name": "device",
+						"type": "device",
+						"filter": "driver_id=sphere"
 					}
 				]
 			}
