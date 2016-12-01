@@ -311,7 +311,7 @@ module.exports = class MipowDriver {
 					setTimeout(() => peripheral.disconnect(), 3000);
 				};
 
-				if (isNaN(device.EFFECT_HANDLE)) {
+				if (isNaN(device.EFFECT_HANDLE) || !peripheral.writeHandle) {
 					peripheral.write(
 						this.SERVICE_CONTROL,
 						CHAR_EFFECT,
@@ -366,7 +366,7 @@ module.exports = class MipowDriver {
 						};
 
 						this.setColorLock.delete(device.id);
-						if (isNaN(device.COLOR_HANDLE)) {
+						if (isNaN(device.COLOR_HANDLE) || !peripheral.writeHandle) {
 							peripheral.write(
 								this.SERVICE_CONTROL,
 								CHAR_COLOR,
