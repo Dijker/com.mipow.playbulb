@@ -28,6 +28,7 @@ module.exports = class MipowDriver {
 
 		this.devices = new Map();
 		this.state = new Map();
+		this.setColorLock = new Map();
 	}
 
 	init(exports, devices, callback) {
@@ -87,6 +88,7 @@ module.exports = class MipowDriver {
 
 		Homey.manager('flow').on('action.flash', (callback, args) => {
 			this.setState(args.device, { effect: 'flash', effectColor: args.color.slice(1), effectSpeed: args.speed });
+			console.log('set flash', args.device, this.getState(args.device));
 			this.setEffect(args.device, callback);
 		});
 
@@ -206,23 +208,54 @@ module.exports = class MipowDriver {
 										id: peripheral.uuid,
 									},
 								};
-								peripheral.read(this.SERVICE_CONTROL, CHAR_NAME, (err, name) => {
-									peripheral.disconnect();
-									if (err) {
-										if (++failedCount === advertisements.length) {
-											console.log('called callback 3', failedCount, advertisements.length);
-											callback(null, []);
+
+								const listDevice = () => {
+									const onNameRead = (err, name) => {
+										peripheral.disconnect();
+										if (err) {
+											if (++failedCount === advertisements.length) {
+												console.log('called callback 3', failedCount, advertisements.length);
+												callback(null, []);
+											}
+											return;
 										}
-										return;
-									}
-									deviceData.name = name.toString();
-									if (callback) {
-										console.log('RETURN CLALBACK', [deviceData]);
-										callback(null, [deviceData]);
-										callback = null;
+										deviceData.name = name.toString();
+										if (callback) {
+											console.log('RETURN CLALBACK', [deviceData]);
+											callback(null, [deviceData]);
+											callback = null;
+										} else {
+											console.log('EMIT DEVICE', [deviceData]);
+											socket.emit('list_devices', [deviceData]);
+										}
+									};
+									if (isNaN(deviceData.data.NAME_HANDLE)) {
+										peripheral.read(this.SERVICE_CONTROL, CHAR_NAME, onNameRead);
 									} else {
-										console.log('EMIT DEVICE', [deviceData]);
-										socket.emit('list_devices', [deviceData]);
+										peripheral.readHandle(deviceData.data.NAME_HANDLE, onNameRead);
+									}
+								};
+
+								peripheral.getService(this.SERVICE_CONTROL, (err, service) => {
+									if (service) {
+										service.discoverCharacteristics((err, characteristics) => {
+											if (characteristics) {
+												characteristics.forEach(characteristic => {
+													if (typeof characteristic.handle === 'number') {
+														if (characteristic.uuid === CHAR_COLOR) {
+															deviceData.data.COLOR_HANDLE = characteristic.handle;
+														} else if (characteristic.uuid === CHAR_EFFECT) {
+															deviceData.data.EFFECT_HANDLE = characteristic.handle;
+														} else if (characteristic.uuid === CHAR_NAME) {
+															deviceData.data.NAME_HANDLE = characteristic.handle;
+														}
+													}
+												});
+											}
+											listDevice();
+										});
+									} else {
+										listDevice();
 									}
 								});
 							});
@@ -271,16 +304,28 @@ module.exports = class MipowDriver {
 			advertisement.connect((err, peripheral) => {
 				console.log('connect', (date - (date = Date.now())) * -1);
 				if (err) return callback(err);
-				peripheral.write(
-					this.SERVICE_CONTROL,
-					CHAR_EFFECT,
-					MipowDriver.state2buffer(this.getState(device), true),
-					(err, result) => {
-						console.log('write', (date - (date = Date.now())) * -1);
-						callback(err, result);
-						setTimeout(() => peripheral.disconnect(), 3000);
-					}
-				);
+
+				const writeCallback = (err, result) => {
+					console.log('write', (date - (date = Date.now())) * -1);
+					callback(err, result);
+					setTimeout(() => peripheral.disconnect(), 3000);
+				};
+
+				if (isNaN(device.EFFECT_HANDLE)) {
+					peripheral.write(
+						this.SERVICE_CONTROL,
+						CHAR_EFFECT,
+						MipowDriver.state2buffer(this.getState(device), true),
+						writeCallback
+					);
+				} else {
+					console.log('writing handle!!');
+					peripheral.writeHandle(
+						device.EFFECT_HANDLE,
+						MipowDriver.state2buffer(this.getState(device), true),
+						writeCallback
+					);
+				}
 			});
 		});
 	}
@@ -288,24 +333,65 @@ module.exports = class MipowDriver {
 	setColor(device, callback) {
 		console.log('start', device.id);
 		let date = Date.now();
-		bleManager.find(device.id, (err, advertisement) => {
-			console.log('find', (date - (date = Date.now())) * -1);
-			if (err) return callback(err);
-			advertisement.connect((err, peripheral) => {
-				console.log('connect', (date - (date = Date.now())) * -1);
-				if (err) return callback(err);
-				peripheral.write(
-					this.SERVICE_CONTROL,
-					CHAR_COLOR,
-					MipowDriver.state2buffer(this.getState(device)),
-					(err, result) => {
-						console.log('write', (date - (date = Date.now())) * -1);
-						callback(err, result);
-						setTimeout(() => peripheral.disconnect(), 3000);
+		if (this.setColorLock.has(device.id)) {
+			this.setColorLock.get(device.id)
+				.then((result) => callback(null, result))
+				.catch((err) => {
+					callback(err);
+					throw err;
+				});
+		} else {
+			const setColorPromise = new Promise((resolve, reject) => {
+				bleManager.find(device.id, (err, advertisement) => {
+					console.log('find', (date - (date = Date.now())) * -1);
+					if (err) {
+						this.setColorLock.delete(device.id);
+						return reject(err);
 					}
-				);
+					advertisement.connect((err, peripheral) => {
+						console.log('connect', (date - (date = Date.now())) * -1);
+						if (err) {
+							this.setColorLock.delete(device.id);
+							return reject(err);
+						}
+
+						const writeCallback = (err, result) => {
+							console.log('write', (date - (date = Date.now())) * -1);
+							if (err) {
+								reject(err);
+							} else {
+								resolve(result);
+							}
+							setTimeout(() => peripheral.disconnect(), 3000);
+						};
+
+						this.setColorLock.delete(device.id);
+						if (isNaN(device.COLOR_HANDLE)) {
+							peripheral.write(
+								this.SERVICE_CONTROL,
+								CHAR_COLOR,
+								MipowDriver.state2buffer(this.getState(device)),
+								writeCallback
+							);
+						} else {
+							console.log('writing handle!');
+							peripheral.writeHandle(
+								device.COLOR_HANDLE,
+								MipowDriver.state2buffer(this.getState(device)),
+								true,
+								writeCallback
+							);
+						}
+					});
+				});
+			}).then((result) => {
+				callback(null, result);
+			}).catch((err) => {
+				callback(err);
+				throw err;
 			});
-		});
+			this.setColorLock.set(device.id, setColorPromise);
+		}
 	}
 
 	static state2buffer(state, effect) {

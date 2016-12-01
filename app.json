@@ -1,6 +1,6 @@
 {
 	"id": "com.mipow.playbulb",
-	"version": "0.1.0",
+	"version": "1.0.0",
 	"compatibility": ">=1.0.0",
 	"name": {
 		"en": "Mipow Playbulb (Experimental)",
@@ -29,8 +29,8 @@
 				"small": "drivers/rainbow/assets/images/small.jpg"
 			},
 			"name": {
-				"en": "MiPow Playbulb Rainbow",
-				"nl": "MiPow Playbulb Rainbow"
+				"en": "Rainbow",
+				"nl": "Rainbow"
 			},
 			"class": "light",
 			"capabilities": [
@@ -63,8 +63,8 @@
 				"small": "drivers/smart/assets/images/small.jpg"
 			},
 			"name": {
-				"en": "MiPow Playbulb Smart",
-				"nl": "MiPow Playbulb Smart"
+				"en": "Smart",
+				"nl": "Smart"
 			},
 			"class": "light",
 			"capabilities": [
@@ -97,8 +97,8 @@
 				"small": "drivers/garden/assets/images/small.jpg"
 			},
 			"name": {
-				"en": "MiPow Playbulb Garden",
-				"nl": "MiPow Playbulb Garden"
+				"en": "Garden",
+				"nl": "Garden"
 			},
 			"class": "light",
 			"capabilities": [
@@ -131,8 +131,8 @@
 				"small": "drivers/sphere/assets/images/small.jpg"
 			},
 			"name": {
-				"en": "MiPow Playbulb Sphere",
-				"nl": "MiPow Playbulb Sphere"
+				"en": "Sphere",
+				"nl": "Sphere"
 			},
 			"class": "light",
 			"capabilities": [
@@ -165,8 +165,8 @@
 				"small": "drivers/candle/assets/images/small.jpg"
 			},
 			"name": {
-				"en": "MiPow Playbulb Candle",
-				"nl": "MiPow Playbulb Candle"
+				"en": "Candle",
+				"nl": "Candle"
 			},
 			"class": "light",
 			"capabilities": [
