@@ -87,34 +87,45 @@ module.exports = class MipowDriver {
 		});
 
 		Homey.manager('flow').on('action.flash', (callback, args) => {
-			this.setState(args.device, { effect: 'flash', effectColor: args.color.slice(1), effectSpeed: args.speed });
-			console.log('set flash', args.device, this.getState(args.device));
-			this.setEffect(args.device, callback);
+			if (this.getDevice(args.device)) {
+				this.setState(args.device, { effect: 'flash', effectColor: args.color.slice(1), effectSpeed: args.speed });
+				this.setEffect(args.device, callback);
+			}
 		});
 
 		Homey.manager('flow').on('action.pulse', (callback, args) => {
-			this.setState(args.device, { effect: 'pulse', effectColor: args.color.slice(1), effectSpeed: args.speed });
-			this.setEffect(args.device, callback);
+			if (this.getDevice(args.device)) {
+				this.setState(args.device, { effect: 'pulse', effectColor: args.color.slice(1), effectSpeed: args.speed });
+				this.setEffect(args.device, callback);
+			}
 		});
 
 		Homey.manager('flow').on('action.candle', (callback, args) => {
-			this.setState(args.device, { effect: 'candle', effectColor: args.color.slice(1), effectSpeed: args.speed });
-			this.setEffect(args.device, callback);
+			if (this.getDevice(args.device)) {
+				this.setState(args.device, { effect: 'candle', effectColor: args.color.slice(1), effectSpeed: args.speed });
+				this.setEffect(args.device, callback);
+			}
 		});
 
 		Homey.manager('flow').on('action.rainbow', (callback, args) => {
-			this.setState(args.device, { effect: 'rainbow', effectColor: '000000', effectSpeed: args.speed });
-			this.setEffect(args.device, callback);
+			if (this.getDevice(args.device)) {
+				this.setState(args.device, { effect: 'rainbow', effectColor: '000000', effectSpeed: args.speed });
+				this.setEffect(args.device, callback);
+			}
 		});
 
 		Homey.manager('flow').on('action.rainbow_fade', (callback, args) => {
-			this.setState(args.device, { effect: 'rainbow_fade', effectColor: '000000', effectSpeed: args.speed });
-			this.setEffect(args.device, callback);
+			if (this.getDevice(args.device)) {
+				this.setState(args.device, { effect: 'rainbow_fade', effectColor: '000000', effectSpeed: args.speed });
+				this.setEffect(args.device, callback);
+			}
 		});
 
 		Homey.manager('flow').on('action.stop_effect', (callback, args) => {
-			this.setState(args.device, { effect: false });
-			this.setColor(args.device, callback);
+			if (this.getDevice(args.device)) {
+				this.setState(args.device, { effect: false });
+				this.setColor(args.device, callback);
+			}
 		});
 
 		callback();
@@ -148,6 +159,7 @@ module.exports = class MipowDriver {
 	getState(device) {
 		const id = this.getDeviceId(device);
 		device = this.getDevice(id);
+		console.log('get state', device, id, this.state.get(id));
 		if (device && this.state.has(id)) {
 			return this.state.get(id) || {};
 		} else if (this.pairingDevice && this.pairingDevice.data.id === id) {
@@ -394,9 +406,9 @@ module.exports = class MipowDriver {
 		}
 	}
 
-	static state2buffer(state, effect) {
-		console.log('state2buffer', state, effect);
-		if (effect) {
+	static state2buffer(state, isEffect) {
+		console.log('state2buffer', state, isEffect);
+		if (isEffect) {
 			return new Buffer([
 				0x00,
 				parseInt(state.effectColor.slice(0, 2), 16),
